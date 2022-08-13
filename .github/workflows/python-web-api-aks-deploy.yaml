@@ -2,10 +2,10 @@ name: build-push-deploy
 
 on:
   workflow_call:
-    # secrets:
-    #   AZURE_CREDENTIALS:
-    #     description: "AZURE_CREDENTIALS"
-    #     required: true
+    secrets:
+      AZURE_CREDENTIALS:
+        description: "AZURE_CREDENTIALS"
+        required: true
     #   REGISTRY_LOGIN_SERVER:
     #     description: "REGISTRY_LOGIN_SERVER"
     #     required: true      
