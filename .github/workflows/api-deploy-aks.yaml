@@ -48,21 +48,12 @@ jobs:
           version: 'v1.21.9'
         id: install    
       
-      # - name: Checkout source code 
-      #   uses: actions/checkout@v3
-      # - name: ACR build
-      #   id: build-push-acr
-      #   uses: azure/acr-build@v1
-      #   with:
-      #     service_principal: ${{ secrets.service_principal }}
-      #     service_principal_password: ${{ secrets.service_principal_password }}
-      #     tenant: ${{ secrets.tenant }}
-      #     registry: ${{ secrets.registry }}
-      #     repository: ${{ secrets.repository }}
-      #     image:  azure-vote-front
-      #     folder: azure-vote
-      #     branch: master
-      #     tag: ${{ github.sha }}
+      - uses: actions/checkout@v2
+        with:
+          repository: 'absalon-github-org/rwf'
+          ref: 'refs/heads/main'
+          path: 'template-folder'
+          #token: ${{ secrets.TOKEN_REPO_TEMPLATE }}
 
       - name: 'Login via Azure CLI'
         uses: azure/login@v1
