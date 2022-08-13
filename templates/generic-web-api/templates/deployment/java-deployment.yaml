@@ -3,20 +3,20 @@ kind: Deployment
 metadata:
   name: "{{ .Values.pod.name }}"
   labels:
-    help.app/type: "java"
+    blue.app/type: "java"
     app: "{{ .Values.pod.label }}"
-    help.github/repo: "{{ .Values.pod.repoName }}"
-    help.github/action: "{{ .Values.pod.action }}"
-    help.github/actor: "{{ .Values.pod.actor }}"
-    help.github/org: "{{ .Values.pod.actor }}"
-    help.github/commit: "{{ .Values.pod.commit }}"
-    help.github/branch: "{{ .Values.pod.branch }}"
-    # tags.datadoghq.com/env: "{{ .Values.pod.environment }}"
-    # tags.datadoghq.com/version: "{{ .Values.pod.msVersionValue }}"
-    # tags.datadoghq.com/service: "{{ .Values.pod.name }}"
-  namespace:  "{{ .Values.customValues.namespace }}"
+    blue.github/repo: "{{ .Values.pod.repoName }}"
+    blue.github/action: "{{ .Values.pod.action }}"
+    blue.github/actor: "{{ .Values.pod.actor }}"
+    blue.github/org: "{{ .Values.pod.actor }}"
+    blue.github/commit: "{{ .Values.pod.commit }}"
+    blue.github/branch: "{{ .Values.pod.branch }}"
+    tags.datadoghq.com/env: "{{ .Values.pod.environment }}"
+    tags.datadoghq.com/version: "{{ .Values.pod.msVersionValue }}"
+    tags.datadoghq.com/service: "{{ .Values.pod.name }}"
+  namespace:  "{{ .Values.pod.namespace }}"
 spec:
-  replicas: {{ .Values.customValues.replicas }}
+  replicas: {{ .Values.pod.replicas }}
   selector:
     matchLabels:
       app:  "{{ .Values.pod.selectorMatchLabelApp }}"
@@ -27,19 +27,20 @@ spec:
   #   type: RollingUpdate
   template:
     metadata:
-      # annotations:
-      #   sidecar.istio.io/inject: "false"
+      annotations:
+        sidecar.istio.io/inject: "false"
       labels:
-        help.app/type: "java"
+        blue.app/type: "java"
         app: "{{ .Values.pod.label }}"
-        help.github/repo: "{{ .Values.pod.repoName }}"
-        help.github/action: "{{ .Values.pod.action }}"
-        help.github/actor: "{{ .Values.pod.actor }}"
-        help.github/commit: "{{ .Values.pod.commit }}"
-        help.github/branch: "{{ .Values.pod.branch }}"
-        # tags.datadoghq.com/env: "{{ .Values.pod.environment }}"
-        # tags.datadoghq.com/version: "{{ .Values.pod.msVersionValue }}"
-        # tags.datadoghq.com/service: "{{ .Values.pod.name }}"
+        blue.github/repo: "{{ .Values.pod.repoName }}"
+        blue.github/action: "{{ .Values.pod.action }}"
+        blue.github/actor: "{{ .Values.pod.actor }}"
+        blue.github/org: "{{ .Values.pod.actor }}"
+        blue.github/commit: "{{ .Values.pod.commit }}"
+        blue.github/branch: "{{ .Values.pod.branch }}"
+        tags.datadoghq.com/env: "{{ .Values.pod.environment }}"
+        tags.datadoghq.com/version: "{{ .Values.pod.msVersionValue }}"
+        tags.datadoghq.com/service: "{{ .Values.pod.name }}"
     spec:
       {{ if .Values.pod.nodeSelector }}
       nodeSelector:
@@ -50,26 +51,30 @@ spec:
         imagePullPolicy: "{{ .Values.pod.imagePullPolicy }}"
         name: "{{ .Values.pod.containerName }}"
         env:
+        - name: "{{ .Values.pod.msVersionVariable }}"
+          value: "{{ .Values.pod.msVersionValue }}"
+        - name: "{{ .Values.pod.springProfileVariable }}"
+          value: "{{ .Values.pod.springProfileValue }}"
         - name: DD_AGENT_HOST
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        # - name: DD_ENV
-        #   valueFrom:
-        #     fieldRef:
-        #       fieldPath: metadata.labels['tags.datadoghq.com/env']
-        # - name: DD_VERSION
-        #   valueFrom:
-        #     fieldRef:
-        #       fieldPath: metadata.labels['tags.datadoghq.com/version']
-        # - name: DD_SERVICE
-        #   valueFrom:
-        #     fieldRef:
-        #       fieldPath: metadata.labels['tags.datadoghq.com/service']
-        # - name: DD_LOGS_INJECTION
-        #   value: "true"
-        # - name: DD_APM_NON_LOCAL_TRAFFIC
-        #   value: "true"
+        - name: DD_ENV
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['tags.datadoghq.com/env']
+        - name: DD_VERSION
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['tags.datadoghq.com/version']
+        - name: DD_SERVICE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['tags.datadoghq.com/service']
+        - name: DD_LOGS_INJECTION
+          value: "true"
+        - name: DD_APM_NON_LOCAL_TRAFFIC
+          value: "true"
         envFrom:
         - configMapRef:
             name: "{{ .Values.config.name }}"
@@ -98,7 +103,6 @@ spec:
           timeoutSeconds: {{ .Values.pod.readinessProbe.timeoutSeconds }}
           failureThreshold: {{ .Values.pod.readinessProbe.failureThreshold }}
         {{end}}
-        {{ if .Values.pod.readinessPath }}
         resources:
           requests:
             cpu: {{ .Values.pod.resources.requests.cpu }}
@@ -106,7 +110,6 @@ spec:
           limits:
             cpu: {{ .Values.pod.resources.limits.cpu }}
             memory: "{{ .Values.pod.resources.limits.memory }}"
-        {{end}}
         volumeMounts:
         - name: tz-chile
           mountPath: /etc/localtime

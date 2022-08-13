@@ -24,7 +24,7 @@ pod:
   containerName: __MSNAME__
   containerPort: 8080
   containerProtocol: TCP
-  msVersionVariable: BX_MS_VERSION
+  msVersionVariable: HELP_MS_VERSION
   msVersionValue: 0.0.1
   environment: develop
   springProfileVariable: SPRING_PROFILES_ACTIVE
@@ -67,4 +67,4 @@ ingress:
     httpPaths: path
     serviceName: service-name
 
-cert:
+#cert:
