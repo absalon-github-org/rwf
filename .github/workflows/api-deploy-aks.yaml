@@ -65,7 +65,7 @@ jobs:
       - name: 'Checkout de los fuentes'
         uses: actions/checkout@main
         with:
-          clean: false
+          path: main
 
       - name: ls test2
         run: ls -l
@@ -80,10 +80,10 @@ jobs:
         with:
           tokenPrefix: '#{'
           tokenSuffix: '}#'
-          files: '.github/values/dev.yaml'
+          files: 'main/.github/values/dev.yaml'
 
       - name: cat test1
-        run: cat .github/values/dev.yaml
+        run: cat main/.github/values/dev.yaml
 
       - name: ls test3
         run: ls -l template-folder/templates/generic-web-api
@@ -142,7 +142,7 @@ jobs:
 
       - name: Concatena los archivos "value-base.yml" y ".github/values/dev.yaml"
         run: |
-                cat template-folder/templates/generic-web-api/value-base.yml .github/values/dev.yaml  > resultvalue-${{ github.run_number }}.yml
+                cat template-folder/templates/generic-web-api/value-base.yml main/.github/values/dev.yaml  > resultvalue-${{ github.run_number }}.yml
 
       - name: cat test3
         run: |
