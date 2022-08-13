@@ -81,15 +81,93 @@ jobs:
           files: '.github/values/dev.yaml'
 
       - name: cat test1
-        run: cat .github/values/dev.yaml 
+        run: cat .github/values/dev.yaml
 
-      # - uses: microsoft/variable-substitution@v1
+      - name: Sustituye variables en "value-base.yml" de Helm Chart con valores de contexto de GitHub
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: 'template-folder/templates/generic-web-api/value-base.yml'
+        env:
+          service.name: '${{ github.event.repository.name }}'
+          service.spec.selector.app: '${{ github.event.repository.name }}'
+          service.enabled: '${{ inputs.service-enabled }}'
+          pod.containerImageRegistrySource: '${{ github.event.repository.name }}:${{ github.sha }}'
+          pod.name: '${{ github.event.repository.name }}'
+          pod.label: '${{ github.event.repository.name }}'
+          pod.action: '${{ github.run_id }}'
+          pod.actor: "${{ github.actor }}"
+          pod.commit: "${{ github.sha }}"
+          pod.branch: "${{ github.ref_name }}"
+          pod.repoName: "${{ github.event.repository.name }}"
+          pod.selectorMatchLabelApp: '${{ github.event.repository.name }}'
+          pod.templateLabelApp: '${{ github.event.repository.name }}'
+          pod.containerName: '${{ github.event.repository.name }}'
+          #pod.namespace: '${{ steps.get-prefix.outputs.prefix }}'
+          #pod.replicas: '${{ inputs.replicas }}'
+          # pod.livenessPath: '${{ inputs.liveness-path }}'
+          # pod.livenessProbe.httpGet.path: '${{ inputs.base-path }}${{ inputs.liveness-path}}'
+          # pod.livenessProbe.initialDelaySeconds: '${{ inputs.liveness-initialDelay}}'
+          # pod.livenessProbe.periodSeconds: '${{ inputs.liveness-periodoSeconds}}'
+          # pod.livenessProbe.timeoutSeconds: '${{ inputs.liveness-timeoutSeconds }}'
+          # pod.livenessProbe.failureThreshold: '${{ inputs.liveness-failureThreshold }}'
+
+          # pod.readinessPath: '${{ inputs.readiness-path }}'
+          # pod.readinessProbe.httpGet.path: '${{ inputs.base-path }}${{ inputs.readiness-path}}'
+          # pod.readinessProbe.initialDelaySeconds: '${{ inputs.readiness-initialDelay}}'
+          # pod.readinessProbe.periodSeconds: '${{ inputs.readiness-periodoSeconds}}'
+          # pod.readinessProbe.timeoutSeconds: '${{ inputs.readiness-timeoutSeconds }}'
+          # pod.readinessProbe.failureThreshold: '${{ inputs.readiness-failureThreshold }}'
+
+          # pod.resources.requests.cpu: '${{ inputs.cpu-base }}'
+          # pod.resources.requests.memory: '${{ inputs.memory-base }}'
+          # pod.resources.limits.cpu: '${{ inputs.cpu-limit }}'
+          # pod.resources.limits.memory: '${{ inputs.memory-limit }}'
+          # pod.environment: '${{ inputs.environment }}'
+
+          # ingress.enabled: '${{ inputs.ingress-enabled }}'
+          # ingress.namespace: '${{ steps.get-prefix.outputs.prefix }}${{ inputs.namespace }}'
+          ingress.name: 'ingress-${{ github.event.repository.name }}'
+          # ingress.annotations.groupName: '${{ inputs.ingress-groupname }}'
+          # ingress.annotations.healthcheckPath: '${{ inputs.base-path }}${{ inputs.liveness-path}}'
+          # ingress.spec.httpPaths: '${{ inputs.base-path }}*'
+          ingress.spec.serviceName: '${{ github.event.repository.name }}'      
+
+      - name: cat test2
+        run: cat template-folder/templates/generic-web-api/value-base.yml
+
+      - name: Concatena los archivos "value-base.yml" y ".github/values/dev.yaml"
+        run: |
+                cat template-folder/templates/generic-web-api/value-base.yml .github/values/dev.yaml  > resultvalue-${{ github.run_number }}.yml
+
+      - name: cat test3
+        run: |
+          cat resultvalue-${{ github.run_number }}.yml
+
+      # - name: Upload artifact "template-folder/*"
+      #   uses: actions/upload-artifact@v2
       #   with:
-      #     files: '${{ inputs.path-values }}'
-      #   env:
-      #     config.name: '${{ github.event.repository.name }}${{ inputs.suffix }}-config'
-      #     secret.name: '${{ github.event.repository.name }}${{ inputs.suffix }}-secret'
-      #     secret.data.SOME_SECRET: '${{ secrets.SOME_SECRET }}'
+      #     name: helm-files-${{ github.run_number }}
+      #     path: template-folder/*
+
+      - name: Reemplaza los templates de Helm (chart)
+        uses: azure/k8s-bake@v1
+        id: bake
+        with:
+          renderEngine: 'helm'
+          helmChart: 'template-folder/templates/generic-web-api'
+          overrideFiles: 'resultvalue-${{ github.run_number }}.yml'
+          helm-version: 'latest'
+          silent: 'false'
+
+      - name: mueve archivos resultantes de Helm hacia folder
+        run: |
+              mv ${{ steps.bake.outputs.manifestsBundle }} helm/manifest${{ inputs.suffix }}-${{ github.run_number }}.yaml
+
+      - name: Artifact de archivos resultantes de Helm
+        uses: actions/upload-artifact@v2
+        with:
+          name: manifest-k8s-helm-${{ github.run_number }}
+          path: helm
 
       # - name: 'Login via Azure CLI'
       #   uses: azure/login@v1
