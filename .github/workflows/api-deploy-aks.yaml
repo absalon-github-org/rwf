@@ -83,6 +83,9 @@ jobs:
       - name: cat test1
         run: cat .github/values/dev.yaml
 
+      - name: ls test3
+        run: ls -l template-folder/templates/generic-web-api
+
       - name: Sustituye variables en "value-base.yml" de Helm Chart con valores de contexto de GitHub
         uses: microsoft/variable-substitution@v1
         with:
