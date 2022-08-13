@@ -1,0 +1,4 @@
+apiVersion: v2
+name: help-generic-web-api
+description: A helm example chart for a integration-entity microservice
+version: 0.1.0

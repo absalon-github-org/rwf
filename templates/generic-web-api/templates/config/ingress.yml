@@ -1,0 +1,36 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: {{ .Values.ingress.namespace }}
+  name: {{ .Values.ingress.name }}
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/target-type: instance
+    alb.ingress.kubernetes.io/group.name: "{{ .Values.ingress.annotations.groupName }}"
+    # IMPORTANT: EVERY INGRESS MUST HAVE A DIFFERENT NUMBER
+    #alb.ingress.kubernetes.io/group.order: "{{ .Values.ingress.annotations.groupOrder }}"
+    #
+    # Health Check Settings
+    # (https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html)
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP 
+    alb.ingress.kubernetes.io/healthcheck-port: traffic-port
+    alb.ingress.kubernetes.io/healthcheck-path: "{{ .Values.ingress.annotations.healthcheckPath }}"
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '10'
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '60'
+    alb.ingress.kubernetes.io/success-codes: '200'
+    alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: {{ .Values.ingress.spec.serviceName }}
+            port:
+              number: 80
+        path: {{ .Values.ingress.spec.httpPaths }}
+        pathType: ImplementationSpecific     
+{{- end -}}

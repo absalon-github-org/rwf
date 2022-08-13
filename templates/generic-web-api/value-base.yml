@@ -1,0 +1,70 @@
+service:
+  name: __MSNAME__
+  type: NodePort
+  protocol: TCP
+  port: 80
+  targetPort: 8080
+  enabled: true
+
+pod:
+  replicas: 1
+  nodeSelector:
+  name: __MSNAME__
+  label: __MSNAME__
+  namespace: __NS__
+  action: __MSNAME__
+  actor: __MSNAME__
+  branch: __MSNAME__
+  commit: __MSNAME__
+  repoName: __MSNAME__
+  selectorMatchLabelApp: __MSNAME__
+  templateLabelApp: __MSNAME__
+  containerImageRegistrySource: ''
+  imagePullPolicy: IfNotPresent
+  containerName: __MSNAME__
+  containerPort: 8080
+  containerProtocol: TCP
+  msVersionVariable: BX_MS_VERSION
+  msVersionValue: 0.0.1
+  environment: develop
+  springProfileVariable: SPRING_PROFILES_ACTIVE
+  springProfileValue: k8s
+  livenessPath: __MSNAME__
+  livenessProbe:
+    httpGet:
+      path: __liveness__
+      port: 8080
+    initialDelaySeconds: 20
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+  readinessPath: __MSNAME__
+  readinessProbe:
+    httpGet:
+      path: __liveness__
+      port: 8080
+    initialDelaySeconds: 20
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+  resources:
+    requests:
+      cpu: 5m
+      memory: "2Mi"
+    limits:
+      cpu: 5m
+      memory: 22Mi"
+
+ingress:
+  enabled: false
+  name: ingress-name
+  namespace: ingress-namespace
+  annotations:
+    groupName: group-name
+    groupOrder: "1"
+    healthcheckPath: path
+  spec:
+    httpPaths: path
+    serviceName: service-name
+
+cert:

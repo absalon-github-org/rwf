@@ -1,0 +1,87 @@
+#https://docs.microsoft.com/en-us/azure/aks/kubernetes-action
+name: build_deploy_aks
+on:
+  workflow_call:
+    inputs:
+      ######## Deploy setting
+      environment:
+        description: "Environment where secrets are located"
+        required: true
+        default: ""
+        type: string      
+
+    secrets:
+      AZURE_CREDENTIALS:
+        description: "AZURE_CREDENTIALS"
+        required: true
+      REGISTRY_LOGIN_SERVER:
+        description: "REGISTRY_LOGIN_SERVER"
+        required: true      
+      REGISTRY_PASSWORD: 
+        description: "REGISTRY_PASSWORD"
+        required: true      
+      REGISTRY_USERNAME:
+        description: "REGISTRY_USERNAME"
+        required: true      
+      RESOURCE_GROUP:
+        description: "RESOURCE_GROUP"
+        required: true  
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print environment name ("github.ref_name" desde el caller workflow)
+        run: echo "${{ inputs.environment }}"
+
+      - uses: azure/setup-kubectl@v3 #azure/setup-kubectl@v2.0
+        with:
+          version: 'v1.21.9'
+        id: install    
+      
+      # - name: Checkout source code 
+      #   uses: actions/checkout@v3
+      # - name: ACR build
+      #   id: build-push-acr
+      #   uses: azure/acr-build@v1
+      #   with:
+      #     service_principal: ${{ secrets.service_principal }}
+      #     service_principal_password: ${{ secrets.service_principal_password }}
+      #     tenant: ${{ secrets.tenant }}
+      #     registry: ${{ secrets.registry }}
+      #     repository: ${{ secrets.repository }}
+      #     image:  azure-vote-front
+      #     folder: azure-vote
+      #     branch: master
+      #     tag: ${{ github.sha }}
+
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set AKS context
+        id: set-context
+        uses: azure/aks-set-context@v3
+        with:
+          resource-group: 'Group-Web-Help-Seguros' #'${{ secrets.resource_group }}' 
+          cluster-name: 'AKS-HelpSeguros-PreProd' #'${{ secrets.cluster_name }}'
+
+      - name: kubectl get nodes
+        run: kubectl get nodes
+
+      # - name: Setup kubectl
+      #   id: install-kubectl
+      #   uses: azure/setup-kubectl@v3
+
+      # ${{ secrets.REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}
+
+      # - name: Deploy to AKS
+      #   id: deploy-aks
+      #   uses: Azure/k8s-deploy@v4
+      #   with:
+      #     namespace: 'default'
+      #     manifests: |
+      #        azure-vote-all-in-one-redis.yaml
+      #     images: '${{ secrets.registry }}.azurecr.io/${{ secrets.repository }}/azure-vote-front:${{ github.sha }}'
+      #     pull: false
