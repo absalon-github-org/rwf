@@ -49,11 +49,14 @@ jobs:
         id: install    
       
       - uses: actions/checkout@v2
+        name: Checkout template folder
         with:
           repository: 'absalon-github-org/rwf'
           ref: 'refs/heads/main'
           path: 'template-folder'
           #token: ${{ secrets.TOKEN_REPO_TEMPLATE }}
+      - name: Ls
+        run: ls -l template-folder/rwf/templates/generic-web-api
 
       - name: 'Login via Azure CLI'
         uses: azure/login@v1
