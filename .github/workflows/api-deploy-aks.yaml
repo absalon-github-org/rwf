@@ -31,7 +31,10 @@ on:
         required: true      
       RESOURCE_GROUP:
         description: "RESOURCE_GROUP"
-        required: true  
+        required: true
+      ALL_JSON_SECRETS:
+        description: "ALL_JSON_SECRETS"
+        required: true   
   
 jobs:
   build:
@@ -49,29 +52,51 @@ jobs:
         id: install    
       
       - uses: actions/checkout@v2
-        name: Checkout template folder
+        name: Checkout template folder (Chart de Helm para deployments k8s)
         with:
           repository: 'absalon-github-org/rwf'
           ref: 'refs/heads/main'
           path: 'template-folder'
           #token: ${{ secrets.TOKEN_REPO_TEMPLATE }}
-      - name: Ls
-        run: ls -l template-folder
 
-      - name: 'Login via Azure CLI'
-        uses: azure/login@v1
+      - name: ls test1
+        run: ls -l template-folder/templates/generic-web-api
+
+      - name: 'Checkout de los fuentes'
+        uses: actions/checkout@main
+
+      - name: ls test2
+        run: ls -l
+
+      - name: Github Secrets to ENV variables
+        uses: Firenza/secrets-to-env@v1.1.0
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+            secrets: ${{ secrets.ALL_JSON_SECRETS }}
 
-      - name: Set AKS context
-        id: set-context
-        uses: azure/aks-set-context@v3
+      - uses: cschleiden/replace-tokens@v1
+        name: Reemplaza secrets en archivos <dev,qa,prod>.yaml
         with:
-          resource-group: 'Group-Web-Help-Seguros' #'${{ secrets.resource_group }}' 
-          cluster-name: 'AKS-HelpSeguros-PreProd' #'${{ secrets.cluster_name }}'
+          tokenPrefix: '#{'
+          tokenSuffix: '}#'
+          files: '.github/values/dev.yaml'
 
-      - name: kubectl get nodes
-        run: kubectl get nodes
+      - name: cat test1
+        run: cat .github/values/dev.yaml 
+
+      # - name: 'Login via Azure CLI'
+      #   uses: azure/login@v1
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # - name: Set AKS context
+      #   id: set-context
+      #   uses: azure/aks-set-context@v3
+      #   with:
+      #     resource-group: 'Group-Web-Help-Seguros' #'${{ secrets.resource_group }}' 
+      #     cluster-name: 'AKS-HelpSeguros-PreProd' #'${{ secrets.cluster_name }}'
+
+      # - name: kubectl get nodes
+      #   run: kubectl get nodes
 
       # - name: Setup kubectl
       #   id: install-kubectl
