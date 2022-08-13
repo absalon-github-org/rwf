@@ -83,6 +83,14 @@ jobs:
       - name: cat test1
         run: cat .github/values/dev.yaml 
 
+      # - uses: microsoft/variable-substitution@v1
+      #   with:
+      #     files: '${{ inputs.path-values }}'
+      #   env:
+      #     config.name: '${{ github.event.repository.name }}${{ inputs.suffix }}-config'
+      #     secret.name: '${{ github.event.repository.name }}${{ inputs.suffix }}-secret'
+      #     secret.data.SOME_SECRET: '${{ secrets.SOME_SECRET }}'
+
       # - name: 'Login via Azure CLI'
       #   uses: azure/login@v1
       #   with:
