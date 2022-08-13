@@ -8,7 +8,13 @@ on:
         description: "Environment where secrets are located"
         required: true
         default: ""
-        type: string      
+        type: string    
+          
+      targetEnvironment:
+        description: "Indica en que ambiente desplegar"
+        required: true
+        default: ""
+        type: string 
 
     secrets:
       AZURE_CREDENTIALS:
@@ -33,6 +39,9 @@ jobs:
     steps:
       - name: Print environment name ("github.ref_name" desde el caller workflow)
         run: echo "${{ inputs.environment }}"
+
+      - name: Print targetEnvironment ("github.event.inputs.name" desde el caller workflow)
+        run: echo "${{ inputs.targetEnvironment }}"
 
       - uses: azure/setup-kubectl@v3 #azure/setup-kubectl@v2.0
         with:
