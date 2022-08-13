@@ -2,22 +2,22 @@ name: build-push-deploy
 
 on:
   workflow_call:
-    secrets:
-      AZURE_CREDENTIALS:
-        description: "AZURE_CREDENTIALS"
-        required: true
-      REGISTRY_LOGIN_SERVER:
-        description: "REGISTRY_LOGIN_SERVER"
-        required: true      
-      REGISTRY_PASSWORD: 
-        description: "REGISTRY_PASSWORD"
-        required: true      
-      REGISTRY_USERNAME:
-        description: "REGISTRY_USERNAME"
-        required: true      
-      RESOURCE_GROUP:
-        description: "RESOURCE_GROUP"
-        required: true      
+    # secrets:
+    #   AZURE_CREDENTIALS:
+    #     description: "AZURE_CREDENTIALS"
+    #     required: true
+    #   REGISTRY_LOGIN_SERVER:
+    #     description: "REGISTRY_LOGIN_SERVER"
+    #     required: true      
+    #   REGISTRY_PASSWORD: 
+    #     description: "REGISTRY_PASSWORD"
+    #     required: true      
+    #   REGISTRY_USERNAME:
+    #     description: "REGISTRY_USERNAME"
+    #     required: true      
+    #   RESOURCE_GROUP:
+    #     description: "RESOURCE_GROUP"
+    #     required: true      
 jobs:
     build-and-deploy:
         runs-on: ubuntu-latest
