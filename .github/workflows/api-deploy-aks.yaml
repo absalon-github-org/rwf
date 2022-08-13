@@ -64,6 +64,8 @@ jobs:
 
       - name: 'Checkout de los fuentes'
         uses: actions/checkout@main
+        with:
+          clean: false
 
       - name: ls test2
         run: ls -l
