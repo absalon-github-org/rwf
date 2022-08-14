@@ -57,7 +57,6 @@ jobs:
           repository: 'absalon-github-org/rwf'
           ref: 'refs/heads/main'
           path: 'template-folder'
-          #token: ${{ secrets.TOKEN_REPO_TEMPLATE }}
 
       - name: ls test1
         run: ls -l template-folder/templates/generic-web-api
@@ -122,12 +121,6 @@ jobs:
         run: |
           cat resultvalue-${{ github.run_number }}.yml
 
-      # - name: Upload artifact "template-folder/*"
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: helm-files-${{ github.run_number }}
-      #     path: template-folder/*
-
       - name: Reemplaza los templates de Helm (chart) con resultvalue-${{ github.run_number }}.yml
         uses: azure/k8s-bake@v1
         id: bake
@@ -147,7 +140,7 @@ jobs:
         with:
           name: manifest-k8s-helm-${{ github.run_number }}
           path: template-folder/templates/generic-web-api
-          
+
       # ----------------------------------
       # LOGIN AZURE + AKS CONTEXT
       # ----------------------------------
