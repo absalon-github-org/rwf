@@ -1,4 +1,4 @@
-{{ if .Values.customValues.ingress-enabled }}
+{{- if .Values.customValues.ingress-enabled -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -8,4 +8,4 @@ metadata:
     kubernetes.io/ingress.class: nginx-internal
   labels:
       env: dev    
-{{ end }}
+{{- end -}}
