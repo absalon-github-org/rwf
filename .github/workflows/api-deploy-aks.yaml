@@ -96,7 +96,7 @@ jobs:
           service.name: 'svc-${{ github.event.repository.name }}'
           service.spec.selector.app: '${{ github.event.repository.name }}'
 
-          pod.containerImageRegistrySource: '${{ github.event.repository.name }}:${{ github.sha }}'
+          pod.containerImageRegistrySource: '${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ github.event.repository.name }}:${{ github.sha }}'
           pod.name: '${{ github.event.repository.name }}'
           pod.label: '${{ github.event.repository.name }}'
           pod.action: '${{ github.run_id }}'
@@ -140,13 +140,17 @@ jobs:
 
       - name: mueve archivos resultantes de Helm hacia folder
         run: |
-              mv ${{ steps.bake.outputs.manifestsBundle }} template-folder/templates/generic-web-api/manifest${{ inputs.suffix }}-${{ github.run_number }}.yaml
+              mv ${{ steps.bake.outputs.manifestsBundle }} template-folder/templates/generic-web-api/manifest${{ github.run_number }}.yaml
 
       - name: Artifact de archivos resultantes de Helm
         uses: actions/upload-artifact@v2
         with:
           name: manifest-k8s-helm-${{ github.run_number }}
           path: template-folder/templates/generic-web-api
+          
+      # ----------------------------------
+      # LOGIN AZURE + AKS CONTEXT
+      # ----------------------------------
 
       # - name: 'Login via Azure CLI'
       #   uses: azure/login@v1
@@ -167,8 +171,30 @@ jobs:
       #   id: install-kubectl
       #   uses: azure/setup-kubectl@v3
 
-      # ${{ secrets.REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}
+      # ----------------------------------
+      #  DESPLIEGA Y VERIFICA STATUS
+      # ----------------------------------
+      
+      # - name: Deploy en AKS con los archivos resultantes de Helm
+      #   id: deploy
+      #   run: |
+      #     kubectl apply -f template-folder/templates/generic-web-api/manifest${{ github.run_number }}.yaml
 
+      # - name: Rollout status deploy
+      #   id: rollout
+      #   run: |
+      #     kubectl rollout status deploy ${{ github.event.repository.name }} -n  ${{ inputs.namespace }} --timeout=300s --watch=true
+
+      # - name: Describe Pods Errors
+      #   id: describepod
+      #   if: ${{ failure() && (steps.rollout.outcome == 'failure') }}
+      #   run: |
+      #         kubectl -n ${{ inputs.namespace }} describe pods $(kubectl -n ${{ inputs.namespace }} get pod -l app=${{ github.event.repository.name }} -o jsonpath="{.items[0].metadata.name}")
+      
+      # ----------------------------------
+      #  FIN
+      # ----------------------------------
+      
       # - name: Deploy to AKS
       #   id: deploy-aks
       #   uses: Azure/k8s-deploy@v4
