@@ -52,11 +52,11 @@ jobs:
         id: install    
       
       - name: Dummy Checkout de Chart como ejemplo
-        if: ${{ inputs.targetEnvironment == "qa" }}
+        if: ${{ inputs.targetEnvironment }} == 'qa'
         run: echo "Checkout de Chart para despliegue en QA"
       
       - name: Dummy Checkout de Chart como ejemplo
-        if: ${{ inputs.targetEnvironment == "dev" }}
+        if: ${{ inputs.targetEnvironment }} == 'dev'
         run: echo "Checkout de Chart para despliegue en DEV"  
 
       - uses: actions/checkout@v2
