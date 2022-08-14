@@ -3,13 +3,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: '{{ .Values.service.name }}'
-  namespace: '{{ .Values.pod.namespace }}'
+  namespace: '{{ .Values.customValues.namespace }}'
+  labels:
+    env: dev
 spec:
-  type: '{{ .Values.service.type }}'
   selector:
     app: '{{ .Values.service.name }}'
-  ports:
-    - protocol: '{{ .Values.service.protocol }}'
-      port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.targetPort }}
+  type: ClusterIP
 {{- end -}}

@@ -93,9 +93,9 @@ jobs:
         with:
           files: 'template-folder/templates/generic-web-api/value-base.yml'
         env:
-          service.name: '${{ github.event.repository.name }}'
+          service.name: 'svc-${{ github.event.repository.name }}'
           service.spec.selector.app: '${{ github.event.repository.name }}'
-          service.enabled: '${{ inputs.service-enabled }}'
+
           pod.containerImageRegistrySource: '${{ github.event.repository.name }}:${{ github.sha }}'
           pod.name: '${{ github.event.repository.name }}'
           pod.label: '${{ github.event.repository.name }}'
@@ -109,7 +109,6 @@ jobs:
           pod.containerName: '${{ github.event.repository.name }}'
 
           ingress.name: 'ingress-${{ github.event.repository.name }}'
-
           ingress.spec.serviceName: '${{ github.event.repository.name }}'      
 
       - name: cat test2

@@ -78,35 +78,35 @@ spec:
         ports:
         - containerPort: {{ .Values.pod.containerPort }}
           protocol: "{{ .Values.pod.containerProtocol }}"
-        {{ if .Values.pod.livenessPath }}
-        livenessProbe:
-          httpGet:
-            path: "{{ .Values.pod.livenessProbe.httpGet.path }}"
-            port: {{ .Values.pod.livenessProbe.httpGet.port }}
-          initialDelaySeconds: {{ .Values.pod.livenessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.pod.livenessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.pod.livenessProbe.timeoutSeconds }}
-          failureThreshold: {{ .Values.pod.livenessProbe.failureThreshold }}
-        {{end}}
-        {{ if .Values.pod.readinessPath }}
-        readinessProbe:
-          httpGet:
-            path: "{{ .Values.pod.readinessProbe.httpGet.path }}"
-            port: {{ .Values.pod.readinessProbe.httpGet.port }}
-          initialDelaySeconds: {{ .Values.pod.readinessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.pod.readinessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.pod.readinessProbe.timeoutSeconds }}
-          failureThreshold: {{ .Values.pod.readinessProbe.failureThreshold }}
-        {{end}}
-        {{ if .Values.pod.readinessPath }}
-        resources:
-          requests:
-            cpu: {{ .Values.pod.resources.requests.cpu }}
-            memory: "{{ .Values.pod.resources.requests.memory }}"
-          limits:
-            cpu: {{ .Values.pod.resources.limits.cpu }}
-            memory: "{{ .Values.pod.resources.limits.memory }}"
-        {{end}}
+        # {{ if .Values.pod.livenessPath }}
+        # livenessProbe:
+        #   httpGet:
+        #     path: "{{ .Values.pod.livenessProbe.httpGet.path }}"
+        #     port: {{ .Values.pod.livenessProbe.httpGet.port }}
+        #   initialDelaySeconds: {{ .Values.pod.livenessProbe.initialDelaySeconds }}
+        #   periodSeconds: {{ .Values.pod.livenessProbe.periodSeconds }}
+        #   timeoutSeconds: {{ .Values.pod.livenessProbe.timeoutSeconds }}
+        #   failureThreshold: {{ .Values.pod.livenessProbe.failureThreshold }}
+        # {{end}}
+        # {{ if .Values.pod.readinessPath }}
+        # readinessProbe:
+        #   httpGet:
+        #     path: "{{ .Values.pod.readinessProbe.httpGet.path }}"
+        #     port: {{ .Values.pod.readinessProbe.httpGet.port }}
+        #   initialDelaySeconds: {{ .Values.pod.readinessProbe.initialDelaySeconds }}
+        #   periodSeconds: {{ .Values.pod.readinessProbe.periodSeconds }}
+        #   timeoutSeconds: {{ .Values.pod.readinessProbe.timeoutSeconds }}
+        #   failureThreshold: {{ .Values.pod.readinessProbe.failureThreshold }}
+        # {{end}}
+        # {{ if .Values.pod.readinessPath }}
+        # resources:
+        #   requests:
+        #     cpu: {{ .Values.pod.resources.requests.cpu }}
+        #     memory: "{{ .Values.pod.resources.requests.memory }}"
+        #   limits:
+        #     cpu: {{ .Values.pod.resources.limits.cpu }}
+        #     memory: "{{ .Values.pod.resources.limits.memory }}"
+        # {{end}}
         volumeMounts:
         - name: tz-chile
           mountPath: /etc/localtime
