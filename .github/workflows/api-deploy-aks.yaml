@@ -140,13 +140,13 @@ jobs:
 
       - name: mueve archivos resultantes de Helm hacia folder
         run: |
-              mv ${{ steps.bake.outputs.manifestsBundle }} helm/manifest${{ inputs.suffix }}-${{ github.run_number }}.yaml
+              mv ${{ steps.bake.outputs.manifestsBundle }} template-folder/templates/generic-web-api/manifest${{ inputs.suffix }}-${{ github.run_number }}.yaml
 
       - name: Artifact de archivos resultantes de Helm
         uses: actions/upload-artifact@v2
         with:
           name: manifest-k8s-helm-${{ github.run_number }}
-          path: helm
+          path: template-folder/templates/generic-web-api
 
       # - name: 'Login via Azure CLI'
       #   uses: azure/login@v1
