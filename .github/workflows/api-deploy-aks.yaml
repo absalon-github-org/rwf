@@ -51,6 +51,14 @@ jobs:
           version: 'v1.21.9'
         id: install    
       
+      - name: Dummy Checkout de Chart como ejemplo
+        if: ${{ inputs.targetEnvironment == "qa" }}
+        run: echo "Checkout de Chart para despliegue en QA"
+      
+      - name: Dummy Checkout de Chart como ejemplo
+        if: ${{ inputs.targetEnvironment == "dev" }}
+        run: echo "Checkout de Chart para despliegue en DEV"  
+
       - uses: actions/checkout@v2
         name: Checkout template folder (Chart de Helm para deployments k8s)
         with:
